@@ -47,7 +47,7 @@ resource "aws_subnet" "pub_subnet" {
 
   tags = {
     Name        = "${var.app_name}-${var.app_environment}-public-subnet-${count.index}"
-    "kubernetes.io/cluster/cluster-name" = "capstone-project"
+    "kubernetes.io/cluster/cluster-name" = "owned"
     "kubernetes.io/role/elb" = "1"
   }
 
@@ -61,7 +61,7 @@ resource "aws_subnet" "priv_subnet" {
 
   tags = {
     Name        = "${var.app_name}-${var.app_environment}-private-subnet-${count.index}"
-    "kubernetes.io/cluster/cluster-name" = "capstone-project"
+    "kubernetes.io/cluster/cluster-name" = "owned"
     "kubernetes.io/role/internal-elb" = "1"
   }
 }
