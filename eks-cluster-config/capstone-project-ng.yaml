@@ -1,0 +1,21 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: capstone-project
+  region: us-east-1
+
+managedNodeGroups:
+  - name: capstone-project-ng
+    instanceTypes:
+        - t2.medium
+    desiredCapacity: 1
+    minSize: 0
+    maxSize: 5
+    privateNetworking: true
+    taints:
+      - {
+          "key": "dedicated",
+          "value": "capstone-project-ng",
+          "effect": "NoSchedule"
+        }

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cli
+  namespace: demo
+spec:
+  selector:
+    matchLabels:
+      app: redis-cli
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-cli
+    spec:
+      containers:
+      - name: redis-cli
+        image: redis:latest
+        command:
+          - "/bin/bash"
+          - "-c"
+          - "sleep 100000"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+      restartPolicy: Always

@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-project-app
+  namespace: demo
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capstone-project-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 33%
+  template:
+    metadata:
+      labels:
+        app: capstone-project-app
+    spec:
+      containers:
+      - name: capstone-project-app
+        image: 268697883394.dkr.ecr.us-east-1.amazonaws.com/capstone-project-app:latest
+        imagePullPolicy: Always
+        readinessProbe:
+            httpGet:
+                path: /
+                port: 8081
+                scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
+      tolerations:
+        - effect: NoSchedule
+          key: dedicated
+          operator: Equal
+          value: capstone-project-ng
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: demo
+  name: capstone-project-svc
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      protocol: TCP
+  type: NodePort
+  selector:
+    app: capstone-project-app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: demo
+  name: capstone-project-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets: subnet-02922b9cd2b4a03ed,subnet-09b145003460b5e93
+spec:
+  ingressClassName: alb
+  defaultBackend:
+    service:
+      name: capstone-project-svc
+      port:
+        number: 8081
+  rules:
+    - host: cafe.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: capstone-project-svc
+                port:
+                  number: 8081

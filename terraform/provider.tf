@@ -15,7 +15,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "tf-state-capstoneproject"
+    bucket = "tf-state-capstoneprojects"
     key    = "capstoneproject/terraform.tfstate"
   }
 }
